@@ -1,0 +1,65 @@
+# -*- coding: utf-8 -*-
+#
+# Developed by Alex Jercan <jercan_alex27@yahoo.com>
+#
+# References:
+#
+
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
+
+
+class MyHorizontalFlip(A.HorizontalFlip):
+    @property
+    def targets(self):
+        return dict(super().targets, **{'depth': self.apply, 'normal': self.apply_normal})
+
+    def apply_normal(self, img, **params):
+        # when flipping horizontally the normal map should be inversed on the x axis
+        img[:, :, 0] = -1 * img[:, :, 0]
+        return super().apply(img, **params)
+
+
+class MyVerticalFlip(A.VerticalFlip):
+    @property
+    def targets(self):
+        return dict(super().targets, **{'depth': self.apply, 'normal': self.apply_normal})
+
+    def apply_normal(self, img, **params):
+        img[:, :, 1] = -1 * img[:, :, 1]  # y axis flip for normal maps
+        return super().apply(img, **params)
+
+
+class MyRandomResizedCrop(A.RandomResizedCrop):
+    @property
+    def targets(self):
+        return dict(super().targets, **{'depth': self.apply_to_mask, 'normal': self.apply_to_mask})
+
+
+class MyOpticalDistortion(A.OpticalDistortion):
+    @property
+    def targets(self):
+        return dict(super().targets, **{'depth': self.apply_to_mask, 'normal': self.apply_to_mask})
+
+class MyGridDistortion(A.GridDistortion):
+    @property
+    def targets(self):
+        return dict(super().targets, **{'depth': self.apply_to_mask, 'normal': self.apply_to_mask})
+
+
+class MyLongestMaxSize(A.LongestMaxSize):
+    @property
+    def targets(self):
+        return dict(super().targets, **{'depth': self.apply_to_mask, 'normal': self.apply_to_mask})
+
+
+class MyPadIfNeeded(A.PadIfNeeded):
+    @property
+    def targets(self):
+        return dict(super().targets, **{'depth': self.apply_to_mask, 'normal': self.apply_to_mask})
+
+
+class MyToTensorV2(ToTensorV2):
+    @property
+    def targets(self):
+        return dict(super().targets, **{'depth': self.apply, 'normal': self.apply})
