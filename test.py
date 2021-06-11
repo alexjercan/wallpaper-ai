@@ -50,7 +50,7 @@ def test(model=None, config=None):
                                       workers=config.WORKERS, pin_memory=config.PIN_MEMORY, shuffle=config.SHUFFLE)
 
     if not model:
-        model = Model(config.IMAGE_SIZE)
+        model = Model()
         model = model.to(DEVICE)
         epoch, model = load_checkpoint(model, config.CHECKPOINT_FILE, DEVICE)
 

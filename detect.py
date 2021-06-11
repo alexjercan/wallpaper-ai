@@ -42,7 +42,7 @@ def detect(model=None, config=None):
     dataset = LoadImages(config.JSON, transform=transform)
 
     if not model:
-        model = Model(config.IMAGE_SIZE)
+        model = Model()
         model = model.to(DEVICE)
         _, model = load_checkpoint(model, config.CHECKPOINT_FILE, DEVICE)
 

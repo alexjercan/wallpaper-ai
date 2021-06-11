@@ -28,7 +28,6 @@ def img2rgb(path):
 def plot_predictions(images, predictions, paths):
     plt.rcParams['figure.figsize'] = [12, 8]
     plt.rcParams['figure.dpi'] = 200
-    print(predictions)
     confs, predictions = torch.max(predictions, 1)
     confs = confs.cpu().numpy()
     predictions = predictions.cpu().numpy()

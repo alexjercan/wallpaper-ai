@@ -12,19 +12,24 @@ import torch.nn.functional as F
 
 
 class Model(nn.Module):
-    def __init__(self, img_size=(1080, 1920)):
+    def __init__(self):
         super().__init__()
-        h, w = img_size[0] // 4, img_size[1] // 4
-        self.conv1 = nn.Conv2d(3, 6, kernel_size=5, padding=2)
+        self.conv1 = nn.Conv2d(3, 8, kernel_size=3, padding=1)
+        self.bn1 = nn.BatchNorm2d(8)
         self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(6, 16, kernel_size=5, padding=2)
-        self.fc1 = nn.Linear(16 * w * h, 120)
-        self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 2)
+        self.conv2 = nn.Conv2d(8, 16, kernel_size=3, padding=1)
+        self.bn2 = nn.BatchNorm2d(16)
+        self.conv3 = nn.Conv2d(16, 16, kernel_size=3, padding=1)
+        self.bn3 = nn.BatchNorm2d(16)
+        self.fc1 = nn.Linear(16 * 8 * 8, 128)
+        self.fc2 = nn.Linear(128, 16)
+        self.fc3 = nn.Linear(16, 2)
 
     def forward(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
+        x = self.pool(F.relu(self.bn1(self.conv1(x))))
+        x = self.pool(F.relu(self.bn2(self.conv2(x))))
+        x = F.relu(self.bn3(self.conv3(x)))
+        x = F.interpolate(x, size=(8, 8))
         x = torch.flatten(x, 1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
@@ -52,7 +57,7 @@ class LossFunction(nn.Module):
 
 if __name__ == "__main__":
     img = torch.rand((4, 3, 1080, 1920))
-    model = Model(img_size=(1080, 1920))
+    model = Model()
     pred = model(img)
     assert pred.shape == (4, 2), f"Model {pred.shape}"
 
