@@ -8,10 +8,9 @@
 import os
 import json
 from copy import copy
-import cv2
 
 from torch.utils.data import Dataset, DataLoader
-from util import load_image
+from src.util import load_image, load_image_uri
 
 
 def create_dataloader(dataset_root, json_path, batch_size=2, transform=None, workers=8, pin_memory=True, shuffle=True):
@@ -99,42 +98,42 @@ class LoadImages():
 
         return og_img, img, img_path
 
+class LoadURIs():
+    def __init__(self, json_data, transform=None) -> None:
+        self.json_data = json_data
+        self.transform = transform
+        self.count = 0
 
-if __name__ == "__main__":
-    from config import JSON, IMAGE_SIZE
-    import albumentations as A
-    import my_albumentations as M
-    import matplotlib.pyplot as plt
+    def __len__(self):
+        return len(self.json_data)
 
-    def visualize(image):
-        plt.figure(figsize=(10, 10))
-        plt.axis('off')
-        plt.imshow(image)
-        plt.show()
+    def __iter__(self):
+        self.count = 0
+        return self
 
-    my_transform = A.Compose(
-        [
-            A.Resize(height=IMAGE_SIZE[0], width=IMAGE_SIZE[1]),
-            A.Normalize(),
-            M.MyToTensorV2(),
-        ],
-    )
+    def __next__(self):
+        index = self.count
 
-    img_transform = A.Compose(
-        [
-            A.Resize(height=IMAGE_SIZE[0], width=IMAGE_SIZE[1]),
-            A.Normalize(),
-            M.MyToTensorV2(),
-        ],
-    )
+        if self.count == self.__len__():
+            raise StopIteration
+        self.count += 1
 
-    _, dataloader = create_dataloader("../_data/wallpapers", "test.json", transform=my_transform)
-    imgs, labels = next(iter(dataloader))
-    assert imgs.shape == (2, 3, IMAGE_SIZE[0], IMAGE_SIZE[1]), f"dataset error {imgs.shape}"
-    assert labels.shape == (2,), f"dataset error {labels.shape}"
+        data = self.__load__(index)
+        data = self.__transform__(data)
+        return data
 
-    dataset = LoadImages(JSON, transform=img_transform)
-    og_img, img, path = next(iter(dataset))
-    assert img.shape == (3, IMAGE_SIZE[0], IMAGE_SIZE[1]), f"dataset error {img.shape}"
+    def __load__(self, index):
+        img_path = self.json_data[index]["image"]
 
-    print("dataset ok")
+        img = load_image_uri(img_path)
+
+        return img, img_path
+
+    def __transform__(self, data):
+        img, img_path = data
+
+        if self.transform is not None:
+            augmentations = self.transform(image=img)
+            img = augmentations["image"]
+
+        return None, img, img_path

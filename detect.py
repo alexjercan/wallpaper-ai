@@ -8,13 +8,13 @@
 import torch
 import argparse
 import albumentations as A
-import my_albumentations as M
+import src.my_albumentations as M
 
-from config import parse_detect_config, DEVICE, read_yaml_config
-from model import Model
-from util import plot_predictions
-from general import load_checkpoint
-from dataset import LoadImages
+from src.config import parse_detect_config, DEVICE, read_yaml_config
+from src.model import Model
+from src.util import plot_predictions
+from src.general import load_checkpoint
+from src.dataset import LoadImages
 
 
 def generatePredictions(model, dataset):

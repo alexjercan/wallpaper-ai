@@ -8,7 +8,7 @@
 import os
 import yaml
 import torch
-from attr_dict import AttrDict
+from src.attr_dict import AttrDict
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 

@@ -8,14 +8,14 @@
 import torch
 import argparse
 import albumentations as A
-import my_albumentations as M
+import src.my_albumentations as M
 
 from tqdm import tqdm
-from metrics import MetricFunction, print_single_error
-from config import parse_test_config, DEVICE, read_yaml_config
-from model import Model, LossFunction
-from general import load_checkpoint, tensors_to_device
-from dataset import create_dataloader
+from src.metrics import MetricFunction, print_single_error
+from src.config import parse_test_config, DEVICE, read_yaml_config
+from src.model import Model, LossFunction
+from src.general import load_checkpoint, tensors_to_device
+from src.dataset import create_dataloader
 
 
 def run_test(model, dataloader, loss_fn, metric_fn):

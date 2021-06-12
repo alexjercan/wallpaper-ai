@@ -5,7 +5,7 @@
 # References:
 #
 
-from metrics import MetricFunction, print_single_error
+from src.metrics import MetricFunction, print_single_error
 import os
 import re
 
@@ -13,15 +13,15 @@ import torch
 import torch.optim
 import argparse
 import albumentations as A
-import my_albumentations as M
+import src.my_albumentations as M
 
 from tqdm import tqdm
-from config import IMAGE_SIZE, parse_test_config, parse_train_config, DEVICE, read_yaml_config
+from src.config import IMAGE_SIZE, parse_test_config, parse_train_config, DEVICE, read_yaml_config
 from datetime import datetime as dt
-from model import Model, LossFunction
+from src.model import Model, LossFunction
 from test import test
-from general import tensors_to_device, save_checkpoint, load_checkpoint
-from dataset import create_dataloader
+from src.general import tensors_to_device, save_checkpoint, load_checkpoint
+from src.dataset import create_dataloader
 
 
 def train_one_epoch(model, dataloader, loss_fn, metric_fn, solver, epoch_idx):

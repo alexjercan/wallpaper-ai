@@ -54,11 +54,3 @@ class LossFunction(nn.Module):
     def show(self):
         loss = self.loss_val
         return f'(total:{loss:.4f})'
-
-if __name__ == "__main__":
-    img = torch.rand((4, 3, 1080, 1920))
-    model = Model()
-    pred = model(img)
-    assert pred.shape == (4, 2), f"Model {pred.shape}"
-
-    print("model ok")
